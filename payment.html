@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maklumat Pelanggan & Pembayaran</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        /* Style untuk halaman pembayaran */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background-color: #c0392b;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .summary, .payment-method {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #c0392b;
+        }
+        .payment-method {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .payment-method-left, .payment-method-right {
+            width: 48%;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #c0392b;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Secret Recipe</div>
+    </header>
+
+    <div class="container">
+        <div class="summary">
+            <h2>Maklumat Pelanggan</h2>
+            <p><strong>Nama Penuh:</strong> <span id="summary-name">-</span></p>
+            <p><strong>No. Telefon:</strong> <span id="summary-phone">-</span></p>
+            <p><strong>Penghantaran Ke:</strong> <span id="summary-delivery">-</span></p>
+        </div>
+
+        <div class="summary">
+            <h2>Ringkasan Pesanan</h2>
+            <div id="order-items">
+                <!-- Item pesanan akan ditambah di sini -->
+            </div>
+        </div>
+
+        <div class="payment-method">
+            <div class="payment-method-left">
+                <h2>Kaedah Pembayaran</h2>
+                <button id="debit-card-btn">Kad Debit</button>
+            </div>
+            <div class="payment-method-right">
+                <h2>Perincian Harga</h2>
+                <p><strong>Jumlah:</strong> RM <span id="payment-total">1.00</span></p>
+            </div>
+        </div>
+
+        <!-- Form untuk input maklumat kad debit -->
+        <div id="card-details" style="display: none;">
+            <h2>Maklumat Kad Debit</h2>
+            <label for="card-element">Kad Debit Anda</label>
+            <div id="card-element"></div> <!-- Elemen kad debit Stripe -->
+            <button id="submit-payment-btn">Bayar RM <span id="payment-total-amount">1.00</span></button>
+        </div>
+    </div>
+
+    <script>
+        const stripe = Stripe('pk_test_51QXalwRwjdqLrFL8G2h4LJyXrIhB1dEPMZqzh6aehjcQT6U7dcedptMQYQm2He8WmxwH4uTxBIgoQQhkgZHj5wnB0003fEMjL9'); // Gantikan dengan kunci API Stripe anda
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        // Kiraan total pembayaran
+        const totalAmount = 1.00; // Jumlah bayaran dalam RM
+        document.getElementById('payment-total').textContent = totalAmount.toFixed(2);
+        document.getElementById('payment-total-amount').textContent = totalAmount.toFixed(2);
+
+        // Apabila pengguna klik pada butang Kad Debit
+        document.getElementById('debit-card-btn').addEventListener('click', () => {
+            document.getElementById('card-details').style.display = 'block'; // Tunjukkan form kad debit
+        });
+
+        // Apabila pengguna klik untuk bayar
+        document.getElementById('submit-payment-btn').addEventListener('click', async () => {
+            const {token, error} = await stripe.createToken(cardElement);
+
+            if (error) {
+                alert('Terdapat ralat: ' + error.message);
+            } else {
+                // Hantar token pembayaran ke server untuk pemprosesan lebih lanjut
+                await processPayment(token);
+            }
+        });
+
+        // Fungsi untuk menghantar token pembayaran ke server
+        async function processPayment(token) {
+            const response = await fetch('/process_payment.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: token.id,
+                    amount: totalAmount * 100 // Jumlah dalam sen
+                })
+            });
+
+            const paymentResult = await response.json();
+            if (paymentResult.success) {
+                alert('Pembayaran berjaya!');
+                window.location.href = 'payment_success.html'; // Redirect ke halaman kejayaan pembayaran
+            } else {
+                alert('Pembayaran gagal. Sila cuba lagi.');
+            }
+        }
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - Kad Debit & QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #0078D7;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0078D7;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005BB5;
+        }
+        .qr-container {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .qr-container img {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+    <script>
+        function showQRCode() {
+            const qrContainer = document.getElementById('qr-container');
+            qrContainer.style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Pembayaran</h2>
+    <form method="POST" action="https://yourgateway.com/process"> 
+        <label for="name">Nama Penuh:</label>
+        <input type="text" id="name" name="name" placeholder="Nama Penuh" required>
+
+        <label for="email">E-mel:</label>
+        <input type="email" id="email" name="email" placeholder="E-mel" required>
+
+        <label for="phone">Nombor Telefon:</label>
+        <input type="text" id="phone" name="phone" placeholder="0123456789" required>
+
+        <label for="amount">Jumlah (MYR):</label>
+        <input type="text" id="amount" name="amount" value="100.00" readonly>
+
+        <input type="hidden" name="merchant_id" value="YOUR-MERCHANT-ID">
+        <input type="hidden" name="api_key" value="YOUR-API-KEY">
+        <input type="hidden" name="order_id" value="ORDER12345">
+        <input type="hidden" name="callback_url" value="https://yourwebsite.com/callback">
+
+        <button type="submit">Bayar dengan Kad Debit</button>
+    </form>
+
+    <button onclick="showQRCode()">Bayar dengan QR Code</button>
+
+    <div class="qr-container" id="qr-container">
+        <p>Imbas kod ini untuk membuat pembayaran:</p>
+        <img src="c:\Users\user\Downloads\qrcode.jpg" alt="QR Code">
+    </div>
+</div>
+
+</body>
+</html>

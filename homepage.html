@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Cafe Style Homepage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #4E342E; /* Rich brown for text */
+            background-color: #F3E5AB; /* Soft beige */
+            background-image: url('images/coffee-monogram.png'), url('images/sticker-coffee.png'); /* Monogram and fun sticker */
+            background-size: 150px, 200px;
+            background-repeat: repeat, repeat;
+        }
+        header {
+            background-color: #240c06; /* Chocolate brown */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        header .logo img {
+            height: 90px; /* Enlarged logo */
+            width: auto;
+            transition: transform 0.5s;
+        }
+        header .logo img:hover {
+            transform: scale(1.1);
+        }
+        header .logo span {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 22px; /* Increased font size */
+            transition: color 0.3s, transform 0.3s;
+        }
+        nav a:hover {
+            color: #D7CCC8; /* Light brown for hover */
+            transform: translateY(-3px);
+        }
+        .hero {
+            background-image: url('images/coffee.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #FFF8E1; /* Soft cream text */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            padding: 100px 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+        .hero h1 {
+            font-size: 50px;
+            margin: 0;
+            font-family: 'Georgia', serif;
+        }
+        .hero p {
+            font-size: 20px;
+            margin: 10px 0 20px;
+        }
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 100px;
+            gap: 20px;
+            background-color: #D7CCC8; /* Light brown */
+        }
+        .category {
+            width: 300px;
+            text-align: center;
+            border: 1px solid #A1887F; /* Medium brown */
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: slideIn 1.5s ease-in-out;
+        }
+        .category img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .category h3 {
+            margin: 10px 0;
+        }
+        .category a {
+            text-decoration: none;
+            color: #5D4037;
+            font-weight: bold;
+            display: block;
+            padding: 10px;
+        }
+        .category:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        footer {
+            background-color: #240c06;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+        .loading span {
+            display: inline-block;
+            animation: steam 1.5s infinite;
+        }
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes steam {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+    </style>
+    <script>
+        function showLoading(event) {
+            event.preventDefault();
+            const loadingDiv = document.querySelector('.loading');
+            loadingDiv.style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = event.target.href;
+            }, 2000); // 2 seconds loading time
+        }
+    </script>
+</head>
+<body>
+    <div class="loading">
+        Brewing your coffee... <span>&#9749;</span>
+    </div>
+    <header>
+        <div class="logo">
+            <img src="c:\\Users\\user\\Downloads\\auroracafe.jpg" alt="Aurora Cafe Logo">
+            <span>AURORA CAFE</span>
+        </div>
+        <nav>
+            <a href="#" onclick="showLoading(event)">Home</a>
+            <a href="#about" onclick="showLoading(event)">About Us</a>
+            <a href="#menu" onclick="showLoading(event)">Menu</a>
+            <a href="#contact" onclick="showLoading(event)">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Aurora Cafe</h1>
+        <p>Delicious Westerns, Desserts, and More</p>
+    </section>
+
+    <section class="categories">
+        <div class="category">
+            <img src="c:\\Users\\user\\Downloads\\western.jpg" alt="Westerns">
+            <h3><a href="menu-western.html" onclick="showLoading(event)">Western</a></h3>
+        </div>
+        <div class="category">
+            <img src="c:\\Users\\user\\Downloads\\desserts.jpg" alt="Desserts">
+            <h3><a href="menu-desserts.html" onclick="showLoading(event)">Dessert</a></h3>
+        </div>
+        <div class="category">
+            <img src="c:\\Users\\user\\Downloads\\drinks.jpg" alt="Drinks">
+            <h3><a href="menu-drinks.html" onclick="showLoading(event)">Drink</a></h3>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; Aurora Cafe. All rights reserved.</p>
+    </footer>
+</body>
+</html>
